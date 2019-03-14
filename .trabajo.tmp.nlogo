@@ -1,8 +1,5 @@
 extensions [nw]
 
-turtles-own[
-  consumidor?
-]
 
 to setup
   ca
