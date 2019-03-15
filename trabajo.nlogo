@@ -1,7 +1,12 @@
 extensions [nw]
 
 turtles-own[
-  consumidor?
+  depresion
+  edad
+  percepcion
+  gusto
+  tipo_consumidor
+  probo?
 ]
 
 to setup
@@ -9,9 +14,20 @@ to setup
   reset-ticks
   nw:generate-preferential-attachment turtles links poblacion 1
   [
-    set shape "person"
+    set shape "car"
     setxy random-xcor random-ycor
     set color white
+    set tipo_consumidor 0
+    set depresion random 101
+    set percepcion random percepcion_riesgo
+    set edad random 30
+    set probo? false
+  ]
+  ask n-of consumidores turtles[
+    set color red
+    set depresion random 21
+    set tipo_consumidor 1
+    set probo? true
   ]
   ; visualización agrdable de la red
   repeat 100
@@ -21,7 +37,42 @@ to setup
 end
 
 to go
+  ask turtles with [tipo_consumidor = 0 and probo? = true][
+    if gusto > 75 [
+      set tipo_consumidor 1
+      set color red
+    ]
 
+    ;if depresion > 65 [
+      ;set gusto gusto + random 15
+    ;]
+  ]
+
+
+
+  ask turtles with [tipo_consumidor = 0 and probo? = false] [
+    let entorno count link-neighbors
+    let entorno_consumidor count link-neighbors with [tipo_consumidor = 1]
+    let proporcion_entorno_consumidor entorno_consumidor / entorno
+
+    ;probar droga
+    if depresion > 80 and percepcion < 50 and entorno_consumidor > 0
+    [
+      set probo? true
+      set color yellow
+      set gusto random 100
+    ]
+  ]
+  cambio_animo
+  tick
+  if ticks > 10000 [stop]
+end
+
+to cambio_animo
+  ask turtles with [tipo_consumidor = 0][
+    set depresion depresion - random 10
+    set depresion depresion + random 10
+  ]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -58,7 +109,7 @@ BUTTON
 105
 NIL
 go\n
-NIL
+T
 1
 T
 OBSERVER
@@ -94,11 +145,52 @@ poblacion
 poblacion
 0
 500
-245.0
+178.0
 1
 1
 NIL
 HORIZONTAL
+
+SLIDER
+30
+177
+202
+210
+consumidores
+consumidores
+0
+poblacion
+45.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+32
+230
+204
+263
+percepcion_riesgo
+percepcion_riesgo
+0
+100
+50.0
+1
+1
+NIL
+HORIZONTAL
+
+MONITOR
+758
+284
+1057
+485
+Probadores
+count turtles with [probo? = true and tipo_consumidor = 0]
+0
+1
+50
 
 @#$#@#$#@
 ## WHAT IS IT?
