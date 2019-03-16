@@ -2,33 +2,28 @@ extensions [nw]
 
 turtles-own[
   depresion
-  edad
   percepcion
-  gusto
+  gusto?
   tipo_consumidor
   probo?
+  aprendizaje
 ]
 
 to setup
   ca
   reset-ticks
-  nw:generate-preferential-attachment turtles links poblacion 1
+  nw:generate-preferential-attachment turtles links poblacion 2
   [
     set shape "person"
     setxy random-xcor random-ycor
     set color white
     set tipo_consumidor 0
     set depresion random 101
+    set aprendizaje random 50
     set percepcion random percepcion_riesgo
-    set edad random 30
     set probo? false
   ]
-  ask n-of consumidores turtles[
-    set color red
-    set depresion random 21
-    set tipo_consumidor 1
-    set probo? true
-  ]
+  setup_consumidores
   ; visualización agrdable de la red
   repeat 100
   [
@@ -37,42 +32,54 @@ to setup
 end
 
 to go
-  ask turtles with [tipo_consumidor = 0 and probo? = true][
-    if gusto > 75 [
-      set tipo_consumidor 1
-      set color red
-      set depresion random 21
-    ]
-
-    ;if depresion > 65 [
-      ;set gusto gusto + random 15
-    ;]
-  ]
-
-
-
-  ask turtles with [tipo_consumidor = 0 and probo? = false] [
-    let entorno count link-neighbors
-    let entorno_consumidor count link-neighbors with [tipo_consumidor = 1]
-    let proporcion_entorno_consumidor entorno_consumidor / entorno
-
-    ;probar droga
-    if depresion > 80 and percepcion < 50 and entorno_consumidor > 0
-    [
-      set probo? true
-      set color yellow
-      set gusto random 100
-    ]
-  ]
+  convertirse_consumidor
+  probar_drogas
   cambio_animo
   tick
   if ticks > 10000 [stop]
+end
+
+to setup_consumidores
+  ask n-of consumidores turtles[
+    set color red
+    set gusto? true
+    set depresion random 21
+    set tipo_consumidor 1
+    set aprendizaje random 15
+    set probo? true
+  ]
+end
+
+to convertirse_consumidor
+  ask turtles with [tipo_consumidor = 0 and probo? = true and gusto? = true][
+    set tipo_consumidor 1
+    set color red
+    set depresion random 21
+
+  ]
+end
+
+to probar_drogas
+  ask turtles with [tipo_consumidor = 0 and probo? = false] [
+    let entorno_consumidor count link-neighbors with [tipo_consumidor = 1]
+
+    ;probar droga
+    if depresion > 80 and percepcion < 50 and entorno_consumidor > 0 and aprendizaje <= 30
+    [
+      set probo? true
+      set color yellow
+      if random 100 > 75 [set gusto? true]
+    ]
+  ]
 end
 
 to cambio_animo
   ask turtles with [tipo_consumidor = 0][
     set depresion depresion - random 10
     set depresion depresion + random 10
+
+    if depresion < 0 [set depresion 0]
+    if depresion > 100 [set depresion 100]
   ]
 end
 @#$#@#$#@
@@ -146,47 +153,47 @@ poblacion
 poblacion
 0
 500
-191.0
+150.0
 1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-30
-177
-202
-210
+28
+213
+200
+246
 consumidores
 consumidores
 0
 poblacion
-51.0
+34.0
 1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-32
-230
-204
-263
+28
+255
+200
+288
 percepcion_riesgo
 percepcion_riesgo
 0
 100
-25.0
+23.0
 1
 1
 NIL
 HORIZONTAL
 
 MONITOR
-758
-284
-1057
-485
+658
+273
+957
+474
 Probadores
 count turtles with [probo? = true and tipo_consumidor = 0]
 0
@@ -212,6 +219,21 @@ PENS
 "default" 1.0 0 -16777216 true "" "plot count turtles with [color = white]"
 "pen-1" 1.0 0 -2674135 true "" "plot count turtles with [color = red]"
 "pen-2" 1.0 0 -1184463 true "" "plot count turtles with [color = yellow]"
+
+SLIDER
+28
+168
+200
+201
+conectividad
+conectividad
+0
+poblacion - 1
+11.0
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
