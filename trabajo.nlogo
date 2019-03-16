@@ -14,7 +14,7 @@ to setup
   reset-ticks
   nw:generate-preferential-attachment turtles links poblacion 1
   [
-    set shape "car"
+    set shape "person"
     setxy random-xcor random-ycor
     set color white
     set tipo_consumidor 0
@@ -41,6 +41,7 @@ to go
     if gusto > 75 [
       set tipo_consumidor 1
       set color red
+      set depresion random 21
     ]
 
     ;if depresion > 65 [
@@ -145,7 +146,7 @@ poblacion
 poblacion
 0
 500
-178.0
+191.0
 1
 1
 NIL
@@ -160,7 +161,7 @@ consumidores
 consumidores
 0
 poblacion
-45.0
+51.0
 1
 1
 NIL
@@ -175,7 +176,7 @@ percepcion_riesgo
 percepcion_riesgo
 0
 100
-50.0
+25.0
 1
 1
 NIL
@@ -191,6 +192,26 @@ count turtles with [probo? = true and tipo_consumidor = 0]
 0
 1
 50
+
+PLOT
+737
+23
+1169
+268
+plot 1
+NIL
+NIL
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"default" 1.0 0 -16777216 true "" "plot count turtles with [color = white]"
+"pen-1" 1.0 0 -2674135 true "" "plot count turtles with [color = red]"
+"pen-2" 1.0 0 -1184463 true "" "plot count turtles with [color = yellow]"
 
 @#$#@#$#@
 ## WHAT IS IT?
