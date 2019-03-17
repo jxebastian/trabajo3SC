@@ -160,10 +160,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-27
-169
-199
-202
+28
+213
+200
+246
 consumidores
 consumidores
 0
@@ -175,10 +175,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-26
-209
-198
-242
+28
+255
+200
+288
 percepcion_riesgo
 percepcion_riesgo
 0
@@ -219,6 +219,21 @@ PENS
 "default" 1.0 0 -16777216 true "" "plot count turtles with [color = white]"
 "pen-1" 1.0 0 -2674135 true "" "plot count turtles with [color = red]"
 "pen-2" 1.0 0 -1184463 true "" "plot count turtles with [color = yellow]"
+
+SLIDER
+28
+168
+200
+201
+conectividad
+conectividad
+0
+poblacion - 1
+11.0
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?

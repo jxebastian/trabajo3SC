@@ -32,6 +32,7 @@ to setup
 end
 
 to go
+  distraccion
   convertirse_consumidor
   probar_drogas
   cambio_animo
@@ -81,6 +82,15 @@ to cambio_animo
     if depresion < 0 [set depresion 0]
     if depresion > 100 [set depresion 100]
   ]
+end
+
+to distraccion
+  ask turtles with [depresion > 80][
+    if probabilidad_distraccion > random 101 [
+      set depresion random 50
+    ]
+  ]
+
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -160,9 +170,9 @@ NIL
 HORIZONTAL
 
 SLIDER
-27
+28
 169
-199
+200
 202
 consumidores
 consumidores
@@ -175,9 +185,9 @@ NIL
 HORIZONTAL
 
 SLIDER
-26
+28
 209
-198
+200
 242
 percepcion_riesgo
 percepcion_riesgo
@@ -201,10 +211,10 @@ count turtles with [probo? = true and tipo_consumidor = 0]
 50
 
 PLOT
-737
-23
-1169
-268
+658
+21
+1090
+266
 plot 1
 NIL
 NIL
@@ -219,6 +229,21 @@ PENS
 "default" 1.0 0 -16777216 true "" "plot count turtles with [color = white]"
 "pen-1" 1.0 0 -2674135 true "" "plot count turtles with [color = red]"
 "pen-2" 1.0 0 -1184463 true "" "plot count turtles with [color = yellow]"
+
+SLIDER
+24
+250
+206
+283
+probabilidad_distraccion
+probabilidad_distraccion
+0
+100
+60.0
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?

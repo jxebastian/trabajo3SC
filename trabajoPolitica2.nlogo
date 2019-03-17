@@ -35,6 +35,7 @@ to go
   convertirse_consumidor
   probar_drogas
   cambio_animo
+  sacar_consumidor
   tick
   if ticks > 10000 [stop]
 end
@@ -82,12 +83,19 @@ to cambio_animo
     if depresion > 100 [set depresion 100]
   ]
 end
+
+to sacar_consumidor
+  if probabilidad_sacar_consumidor > random 101 and ticks mod numero_dias = 0 and count turtles with [tipo_consumidor = 1] > 0[
+    ask n-of 1 turtles with [tipo_consumidor = 1][die]
+  ]
+
+end
 @#$#@#$#@
 GRAPHICS-WINDOW
-210
-10
-647
-448
+268
+18
+705
+456
 -1
 -1
 13.0
@@ -160,10 +168,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-27
-169
-199
-202
+26
+168
+198
+201
 consumidores
 consumidores
 0
@@ -175,9 +183,9 @@ NIL
 HORIZONTAL
 
 SLIDER
-26
+27
 209
-198
+199
 242
 percepcion_riesgo
 percepcion_riesgo
@@ -190,10 +198,10 @@ NIL
 HORIZONTAL
 
 MONITOR
-658
-273
-957
-474
+738
+279
+1037
+480
 Probadores
 count turtles with [probo? = true and tipo_consumidor = 0]
 0
@@ -219,6 +227,36 @@ PENS
 "default" 1.0 0 -16777216 true "" "plot count turtles with [color = white]"
 "pen-1" 1.0 0 -2674135 true "" "plot count turtles with [color = red]"
 "pen-2" 1.0 0 -1184463 true "" "plot count turtles with [color = yellow]"
+
+SLIDER
+26
+252
+249
+285
+probabilidad_sacar_consumidor
+probabilidad_sacar_consumidor
+0
+100
+64.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+26
+292
+198
+325
+numero_dias
+numero_dias
+0
+100
+6.0
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
