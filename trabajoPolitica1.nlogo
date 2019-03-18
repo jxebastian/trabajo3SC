@@ -32,6 +32,7 @@ to setup
 end
 
 to go
+  distraccion
   convertirse_consumidor
   probar_drogas
   cambio_animo
@@ -80,6 +81,17 @@ to cambio_animo
 
     if depresion < 0 [set depresion 0]
     if depresion > 100 [set depresion 100]
+  ]
+end
+
+to distraccion
+  if ticks mod dias_distraccion = 0 [
+    ask turtles with [tipo_consumidor = 0 and gusto? = false][
+      if probabilidad_distraccion > random 101 [
+        set depresion depresion - random 20
+        if depresion < 0 [set depresion 0]
+      ]
+    ]
   ]
 end
 @#$#@#$#@
@@ -161,9 +173,9 @@ HORIZONTAL
 
 SLIDER
 28
-213
+169
 200
-246
+202
 consumidores
 consumidores
 0
@@ -176,9 +188,9 @@ HORIZONTAL
 
 SLIDER
 28
-255
+209
 200
-288
+242
 percepcion_riesgo
 percepcion_riesgo
 0
@@ -201,10 +213,10 @@ count turtles with [probo? = true and tipo_consumidor = 0]
 50
 
 PLOT
-737
-23
-1169
-268
+658
+21
+1090
+266
 plot 1
 NIL
 NIL
@@ -221,15 +233,30 @@ PENS
 "pen-2" 1.0 0 -1184463 true "" "plot count turtles with [color = yellow]"
 
 SLIDER
-28
-168
-200
-201
-conectividad
-conectividad
+24
+250
+206
+283
+probabilidad_distraccion
+probabilidad_distraccion
 0
-poblacion - 1
-11.0
+100
+60.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+26
+290
+198
+323
+dias_distraccion
+dias_distraccion
+0
+50
+16.0
 1
 1
 NIL
