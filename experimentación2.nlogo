@@ -1,115 +1,83 @@
 extensions [nw]
-
-turtles-own[
-  depresion
-  percepcion
-  gusto?
-  tipo_consumidor
-  probo?
-  aprendizaje
-]
+globals [infectados]
 
 to setup
   ca
   reset-ticks
-  nw:generate-preferential-attachment turtles links poblacion 2
+
+  ; generar la población conectada a través de una red libre de escala
+  If tipored = "libre de escala"
   [
-    set shape "person"
-    setxy random-xcor random-ycor
-    set color white
-    set tipo_consumidor 0
-    set depresion random 101
-    set aprendizaje random 50
-    set percepcion random percepcion_riesgo
-    set probo? false
+    nw:generate-preferential-attachment turtles links poblacion 1
+    [
+      set shape "person"
+      setxy random-xcor random-ycor
+      set color white
+    ]
   ]
-  setup_consumidores
+
+  ; generar la población conectada a través de una red libre de escala
+  If tipored = "aleatoria"
+  [
+    create-turtles poblacion
+    [
+      set shape "person"
+      setxy random-xcor random-ycor
+      set color white
+    ]
+    ask turtles
+    [
+      if random 100 < prob_conex_aleatoria
+      [
+        create-link-with one-of other turtles
+      ]
+    ]
+  ]
+
   ; visualización agrdable de la red
   repeat 100
   [
     layout-spring turtles links 0.9 0.9 0.1
   ]
+
+  ; infectar a los primeros contagiados
+  ask n-of (infectados_porc / 100 * poblacion) turtles
+  [
+    set color blue
+  ]
+
 end
 
 to go
-  if politica = "distraccion para los no consumidores" [distraccion]
-  convertirse_consumidor
-  probar_drogas
-  cambio_animo
-  if politica = "sacar a los consumidores del sistema" [sacar_consumidor]
+  ask turtles
+  [
+    let vecinos_azules count link-neighbors with [color = blue]
+    let numero random 100
+    if vecinos_azules >= 1 and numero < contagio_prob [set color blue]
+  ]
+  set infectados count turtles with [color = blue]
   tick
-  if ticks > 10000 [stop]
+
+  if ticks > 100 [stop]
 end
 
-to setup_consumidores
-  ask n-of consumidores turtles[
-    set color red
-    set gusto? true
-    set depresion random 21
-    set tipo_consumidor 1
-    set aprendizaje random 15
-    set probo? true
-  ]
-end
 
-to convertirse_consumidor
-  ask turtles with [tipo_consumidor = 0 and probo? = true and gusto? = true][
-    set tipo_consumidor 1
-    set color red
-    set depresion random 21
-
-  ]
-end
-
-to probar_drogas
-  ask turtles with [tipo_consumidor = 0 and probo? = false] [
-    let entorno_consumidor count link-neighbors with [tipo_consumidor = 1]
-
-    ;probar droga
-    if depresion > 80 and percepcion < 50 and entorno_consumidor > 0 and aprendizaje <= 30
-    [
-      set probo? true
-      set color yellow
-      if random 100 > 75 [set gusto? true]
-    ]
-  ]
-end
-
-to cambio_animo
-  ask turtles with [tipo_consumidor = 0][
-    set depresion depresion - random 10
-    set depresion depresion + random 10
-
-    if depresion < 0 [set depresion 0]
-    if depresion > 100 [set depresion 100]
-  ]
-end
-
-to distraccion
-  if ticks mod dias_distraccion = 0 [
-    ask turtles with [tipo_consumidor = 0 and gusto? = false][
-      if probabilidad_distraccion > random 101 [
-        set depresion depresion - random 20
-        if depresion < 0 [set depresion 0]
-      ]
-    ]
-  ]
-end
-
-to sacar_consumidor
-  if probabilidad_sacar_consumidor > random 101 and ticks mod numero_dias = 0 and count turtles with [tipo_consumidor = 1] > 0[
-    ask n-of 1 turtles with [tipo_consumidor = 1][die]
-  ]
+to red_aleatoria
+  ask turtles
+ [
+    if (1 / 100) >= random-float 1
+    [create-link-with one-of other turtles]
+ ]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
-286
-27
-723
-465
+210
+10
+543
+344
 -1
 -1
-13.0
+10.85
 1
 10
 1
@@ -130,13 +98,45 @@ ticks
 30.0
 
 BUTTON
-48
-72
-111
-105
+19
+50
+84
+84
+Setup
+setup
 NIL
-go\n
+1
 T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+SLIDER
+17
+140
+190
+173
+poblacion
+poblacion
+0
+1000
+500.0
+1
+1
+NIL
+HORIZONTAL
+
+BUTTON
+19
+89
+83
+123
+NIL
+go
+NIL
 1
 T
 OBSERVER
@@ -147,13 +147,13 @@ NIL
 1
 
 BUTTON
-49
-31
-112
-64
+85
+89
+149
+123
 NIL
-setup\n
-NIL
+go
+T
 1
 T
 OBSERVER
@@ -164,67 +164,26 @@ NIL
 1
 
 SLIDER
-28
-126
-200
-159
-poblacion
-poblacion
+16
+177
+189
+210
+infectados_porc
+infectados_porc
 0
-500
-150.0
+10
+6.0
 1
 1
 NIL
 HORIZONTAL
-
-SLIDER
-27
-169
-199
-202
-consumidores
-consumidores
-0
-poblacion
-34.0
-1
-1
-NIL
-HORIZONTAL
-
-SLIDER
-26
-209
-198
-242
-percepcion_riesgo
-percepcion_riesgo
-0
-100
-23.0
-1
-1
-NIL
-HORIZONTAL
-
-MONITOR
-777
-289
-1076
-490
-Probadores
-count turtles with [probo? = true and tipo_consumidor = 0]
-0
-1
-50
 
 PLOT
-737
-23
-1169
-268
-plot 1
+579
+42
+946
+298
+Conteo
 NIL
 NIL
 0.0
@@ -232,82 +191,61 @@ NIL
 0.0
 10.0
 true
-false
+true
 "" ""
 PENS
-"default" 1.0 0 -16777216 true "" "plot count turtles with [color = white]"
-"pen-1" 1.0 0 -2674135 true "" "plot count turtles with [color = red]"
-"pen-2" 1.0 0 -1184463 true "" "plot count turtles with [color = yellow]"
+"infectados" 1.0 0 -13345367 true "" "plot count turtles with [color  = blue]"
+
+SLIDER
+14
+214
+187
+247
+contagio_prob
+contagio_prob
+0
+10
+10.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+17
+309
+190
+342
+prob_conex_aleatoria
+prob_conex_aleatoria
+0
+100
+80.0
+1
+1
+NIL
+HORIZONTAL
 
 CHOOSER
-27
-411
-277
-456
-politica
-politica
-"sin politica" "distraccion para los no consumidores" "sacar a los consumidores del sistema"
-2
-
-SLIDER
-25
-249
-207
-282
-probabilidad_distraccion
-probabilidad_distraccion
+15
+258
+187
+303
+tipored
+tipored
+"libre de escala" "aleatoria"
 0
-100
-50.0
-1
-1
-NIL
-HORIZONTAL
 
-SLIDER
-26
-288
-198
-321
-dias_distraccion
-dias_distraccion
+MONITOR
+600
+318
+728
+364
+Personas Infectadas
+infectados
 0
-100
-50.0
 1
-1
-NIL
-HORIZONTAL
-
-SLIDER
-26
-328
-249
-361
-probabilidad_sacar_consumidor
-probabilidad_sacar_consumidor
-0
-100
-50.0
-1
-1
-NIL
-HORIZONTAL
-
-SLIDER
-27
-369
-199
-402
-numero_dias
-numero_dias
-0
-100
-50.0
-1
-1
-NIL
-HORIZONTAL
+11
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -655,6 +593,52 @@ NetLogo 6.0.4
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
+<experiments>
+  <experiment name="experiment" repetitions="10" runMetricsEveryStep="false">
+    <setup>setup</setup>
+    <go>go</go>
+    <metric>infectados</metric>
+    <enumeratedValueSet variable="tipored">
+      <value value="&quot;libre de escala&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="contagio_prob">
+      <value value="3"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="poblacion">
+      <value value="500"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="infectados_porc">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="prob_conex_aleatoria">
+      <value value="80"/>
+    </enumeratedValueSet>
+  </experiment>
+  <experiment name="experiment" repetitions="50" runMetricsEveryStep="false">
+    <setup>setup</setup>
+    <go>go</go>
+    <metric>infectados</metric>
+    <enumeratedValueSet variable="tipored">
+      <value value="&quot;libre de escala&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="contagio_prob">
+      <value value="1"/>
+      <value value="5"/>
+      <value value="10"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="poblacion">
+      <value value="500"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="infectados_porc">
+      <value value="1"/>
+      <value value="3"/>
+      <value value="6"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="prob_conex_aleatoria">
+      <value value="80"/>
+    </enumeratedValueSet>
+  </experiment>
+</experiments>
 @#$#@#$#@
 @#$#@#$#@
 default
