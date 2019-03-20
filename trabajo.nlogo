@@ -224,20 +224,20 @@ PLOT
 23
 1169
 268
-plot 1
-NIL
-NIL
+Salidas
+Ticks
+Personas
 0.0
 10.0
 0.0
 10.0
 true
-false
+true
 "" ""
 PENS
-"default" 1.0 0 -16777216 true "" "plot count turtles with [color = white]"
-"pen-1" 1.0 0 -2674135 true "" "plot count turtles with [color = red]"
-"pen-2" 1.0 0 -1184463 true "" "plot count turtles with [color = yellow]"
+"No consumidores" 1.0 0 -16777216 true "" "plot count turtles with [color = white]"
+"Consumidores" 1.0 0 -2674135 true "" "plot count turtles with [color = red]"
+"Probadores" 1.0 0 -1184463 true "" "plot count turtles with [color = yellow]"
 
 CHOOSER
 27
@@ -247,7 +247,7 @@ CHOOSER
 politica
 politica
 "sin politica" "distraccion para los no consumidores" "sacar a los consumidores del sistema"
-2
+0
 
 SLIDER
 25
